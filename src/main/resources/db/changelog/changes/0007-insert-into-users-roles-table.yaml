@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-into-users-roles-table
+      author: rsoproniuk
+      changes:
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: "1"
+              - column:
+                  name: roles_id
+                  value: "1"
