@@ -1,2 +1,21 @@
-package mainpackage.carsharingapp.security;public class CustomUserDetailsService {
+package mainpackage.carsharingapp.security;
+
+import lombok.RequiredArgsConstructor;
+import mainpackage.carsharingapp.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CustomUserDetailsService implements UserDetailsService {
+    private final UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String email)
+            throws UsernameNotFoundException {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new UsernameNotFoundException("User by email: " + email + " does not exist in DB"));
+    }
 }

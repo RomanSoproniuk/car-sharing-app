@@ -1,2 +1,30 @@
-package mainpackage.carsharingapp.validation;public @interface FieldMatch {
+package mainpackage.carsharingapp.validation;
+
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Constraint(validatedBy = FieldMatchValidator.class)
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface FieldMatch {
+    String message() default "Password and repeat password do not match";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
+
+    String password();
+    String repeatPassword();
+
+    @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+    @Retention(value = RetentionPolicy.RUNTIME)
+    @interface List {
+        FieldMatch[] value();
+    }
+
 }
+

@@ -1,2 +1,6 @@
-package mainpackage.carsharingapp.dto;public record UserLoginResponseDto() {
+package mainpackage.carsharingapp.dto;
+
+public record UserLoginResponseDto(
+        String token
+) {
 }
