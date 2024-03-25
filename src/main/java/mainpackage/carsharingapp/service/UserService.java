@@ -1,6 +1,8 @@
 package mainpackage.carsharingapp.service;
 
+import java.security.Principal;
 import mainpackage.carsharingapp.dto.RoleRequestDto;
+import mainpackage.carsharingapp.dto.UserProfileResponseDto;
 import mainpackage.carsharingapp.dto.UserRegistrationRequestDto;
 import mainpackage.carsharingapp.dto.UserResponseDto;
 import mainpackage.carsharingapp.exceptions.RegistrationException;
@@ -10,4 +12,6 @@ public interface UserService {
             throws RegistrationException;
 
     void updateUserRole(RoleRequestDto roleRequestDto, Long id);
+
+    UserProfileResponseDto getProfileInfo(Principal principal);
 }

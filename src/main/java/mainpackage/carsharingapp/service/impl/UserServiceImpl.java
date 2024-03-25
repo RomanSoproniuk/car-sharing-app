@@ -1,9 +1,11 @@
 package mainpackage.carsharingapp.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.security.Principal;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.RoleRequestDto;
+import mainpackage.carsharingapp.dto.UserProfileResponseDto;
 import mainpackage.carsharingapp.dto.UserRegistrationRequestDto;
 import mainpackage.carsharingapp.dto.UserResponseDto;
 import mainpackage.carsharingapp.exceptions.RegistrationException;
@@ -62,5 +64,12 @@ public class UserServiceImpl implements UserService {
         }
         userFromDbById.getRoles().add(roleFromDbByName);
         userRepository.save(userFromDbById);
+    }
+
+    @Override
+    public UserProfileResponseDto getProfileInfo(Principal principal) {
+        String userEmail = principal.getName();
+        User userByEmail = userRepository.findByEmail(userEmail).get();
+        return userMapper.toUserProfileResponse(userByEmail);
     }
 }
