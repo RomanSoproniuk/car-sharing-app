@@ -5,9 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserProfileResponseDto {
+public class UserUpdateProfileRequestDto {
     private String email;
     private String firstName;
     private String lastName;
-    private String message;
 }

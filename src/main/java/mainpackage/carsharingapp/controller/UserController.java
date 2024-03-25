@@ -4,6 +4,7 @@ import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.RoleRequestDto;
 import mainpackage.carsharingapp.dto.UserProfileResponseDto;
+import mainpackage.carsharingapp.dto.UserUpdateProfileRequestDto;
 import mainpackage.carsharingapp.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,5 +33,12 @@ public class UserController {
     @GetMapping("/me")
     public UserProfileResponseDto getProfileInfo(Principal principal) {
         return userService.getProfileInfo(principal);
+    }
+
+    @PutMapping("/me")
+    public UserProfileResponseDto updateProfileInfo(
+            Principal principal,
+            @RequestBody UserUpdateProfileRequestDto userUpdateProfileRequestDto) {
+        return userService.updateProfileInfo(principal, userUpdateProfileRequestDto);
     }
 }

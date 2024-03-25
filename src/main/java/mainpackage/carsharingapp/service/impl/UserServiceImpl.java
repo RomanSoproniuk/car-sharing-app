@@ -8,6 +8,7 @@ import mainpackage.carsharingapp.dto.RoleRequestDto;
 import mainpackage.carsharingapp.dto.UserProfileResponseDto;
 import mainpackage.carsharingapp.dto.UserRegistrationRequestDto;
 import mainpackage.carsharingapp.dto.UserResponseDto;
+import mainpackage.carsharingapp.dto.UserUpdateProfileRequestDto;
 import mainpackage.carsharingapp.exceptions.RegistrationException;
 import mainpackage.carsharingapp.exceptions.RoleException;
 import mainpackage.carsharingapp.mapper.RoleMapper;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private static final Long USER_ROLE_ID = 2L;
+    private static final String CHANGE_EMAIL_MESSAGE
+            = "If you changed your email, please log in with new email";
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
@@ -68,8 +71,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileResponseDto getProfileInfo(Principal principal) {
+        User userFromPrincipal = getUserFromPrincipal(principal);
+        return userMapper.toUserProfileResponse(userFromPrincipal);
+    }
+
+    @Override
+    public UserProfileResponseDto updateProfileInfo(
+            Principal principal,
+            UserUpdateProfileRequestDto userUpdateProfileRequestDto) {
+        User userFromPrincipal = getUserFromPrincipal(principal);
+        if (userUpdateProfileRequestDto.getEmail() != null
+                && userRepository.findByEmail(userUpdateProfileRequestDto.getEmail()).isEmpty()) {
+            userFromPrincipal.setEmail(userUpdateProfileRequestDto.getEmail());
+        }
+        if (userUpdateProfileRequestDto.getFirstName() != null) {
+            userFromPrincipal.setFirstName(userUpdateProfileRequestDto.getFirstName());
+        }
+        if (userUpdateProfileRequestDto.getLastName() != null) {
+            userFromPrincipal.setLastName(userUpdateProfileRequestDto.getLastName());
+        }
+        User savedUser = userRepository.save(userFromPrincipal);
+        UserProfileResponseDto userProfileResponse
+                = userMapper.toUserProfileResponse(savedUser);
+        userProfileResponse.setMessage(CHANGE_EMAIL_MESSAGE);
+        return userProfileResponse;
+    }
+
+    private User getUserFromPrincipal(Principal principal) {
         String userEmail = principal.getName();
-        User userByEmail = userRepository.findByEmail(userEmail).get();
-        return userMapper.toUserProfileResponse(userByEmail);
+        return userRepository.findByEmail(userEmail).get();
     }
 }
