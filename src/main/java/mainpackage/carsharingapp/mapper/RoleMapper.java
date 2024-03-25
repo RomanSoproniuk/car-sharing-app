@@ -11,8 +11,8 @@ import org.mapstruct.Named;
 
 @Mapper(config = MapperConfig.class)
 public interface RoleMapper {
-    String ROLE_USER = "USER";
-    String ROLE_ADMIN = "ADMIN";
+    String ROLE_CUSTOMER = "CUSTOMER";
+    String ROLE_MANAGER = "MANAGER";
 
     @Mapping(target = "name", source = "roleName",
             qualifiedByName = "transformRoleStringToRoleName")
@@ -20,11 +20,11 @@ public interface RoleMapper {
 
     @Named("transformRoleStringToRoleName")
     default Role.RoleName transformRoleStringToRoleName(String role) {
-        if (Objects.equals(ROLE_USER.toLowerCase(), role.toLowerCase())) {
-            return Role.RoleName.ADMIN;
+        if (Objects.equals(ROLE_CUSTOMER.toLowerCase(), role.toLowerCase())) {
+            return Role.RoleName.CUSTOMER;
         }
-        if (Objects.equals(ROLE_ADMIN.toLowerCase(), role.toLowerCase())) {
-            return Role.RoleName.USER;
+        if (Objects.equals(ROLE_MANAGER.toLowerCase(), role.toLowerCase())) {
+            return Role.RoleName.MANAGER;
         }
         throw new RoleException("You have entered a role that does not exist, "
                 + "please check your entry and try again.");

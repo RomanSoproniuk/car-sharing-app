@@ -11,7 +11,7 @@ databaseChangeLog:
                   value: "1"
               - column:
                   name: role_name
-                  value: "ADMIN"
+                  value: "MANAGER"
         - insert:
             tableName: roles
             columns:
@@ -20,4 +20,4 @@ databaseChangeLog:
                   value: "2"
               - column:
                   name: role_name
-                  value: "USER"
+                  value: "CUSTOMER"

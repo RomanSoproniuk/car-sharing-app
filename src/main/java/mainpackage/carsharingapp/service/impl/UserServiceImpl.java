@@ -12,6 +12,7 @@ import mainpackage.carsharingapp.mapper.RoleMapper;
 import mainpackage.carsharingapp.mapper.UserMapper;
 import mainpackage.carsharingapp.model.Role;
 import mainpackage.carsharingapp.model.User;
+import mainpackage.carsharingapp.repository.RoleRepository;
 import mainpackage.carsharingapp.repository.UserRepository;
 import mainpackage.carsharingapp.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,10 +21,12 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private static final Long USER_ROLE_ID = 2L;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleMapper roleMapper;
+    private final RoleRepository roleRepository;
 
     @Override
     public UserResponseDto registerUser(UserRegistrationRequestDto userRegistrationRequestDto)
@@ -38,9 +41,8 @@ public class UserServiceImpl implements UserService {
         user.setFirstName(userRegistrationRequestDto.getFirstName());
         user.setLastName(userRegistrationRequestDto.getLastName());
         user.setPassword(passwordEncoder.encode(userRegistrationRequestDto.getPassword()));
-        Role userRole = new Role();
-        userRole.setName(Role.RoleName.USER);
-        user.setRoles(Set.of(userRole));
+        Role userRole = roleRepository.findById(USER_ROLE_ID).orElseThrow();
+        user.getRoles().add(userRole);
         User savedUser = userRepository.save(user);
         return userMapper.toUserResponse(savedUser);
     }
@@ -48,16 +50,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserRole(RoleRequestDto roleRequestDto, Long id) {
         Role roleForUpdate = roleMapper.toEntity(roleRequestDto);
-        User userFromDbById = userRepository.findAllById(id).orElseThrow(() ->
+        User userFromDbById = userRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("User by id: " + id
                         + " does not exist in DB"));
+        Role roleFromDbByName
+                = roleRepository.findByName(roleForUpdate.getName()).get();
         Set<Role> userRoles = userFromDbById.getRoles();
-        if (userRoles.contains(roleForUpdate)) {
+        if (userRoles.contains(roleFromDbByName)) {
             throw new RoleException("User by id: " + id
                     + " already has role " + roleRequestDto.getRoleName());
         }
-        userRoles.add(roleForUpdate);
-        userFromDbById.setRoles(userRoles);
+        userFromDbById.getRoles().add(roleFromDbByName);
         userRepository.save(userFromDbById);
     }
 }

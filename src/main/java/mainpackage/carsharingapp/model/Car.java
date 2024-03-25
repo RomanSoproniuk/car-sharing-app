@@ -31,7 +31,7 @@ public class Car {
             nullable = false)
     private Type type;
     private int inventory;
-    private BigDecimal dailyFee;
+    private BigDecimal dailyFee = BigDecimal.ZERO;
     @Column (name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 

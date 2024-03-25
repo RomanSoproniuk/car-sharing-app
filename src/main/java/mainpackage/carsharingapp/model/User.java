@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +38,7 @@ public class User implements UserDetails {
     @Column(name = "type",
             nullable = false)
     @ManyToMany
-    private Set<Role> roles;
+    private Set<Role> roles = new LinkedHashSet<>();
     private boolean isDeleted = false;
 
     @Override
