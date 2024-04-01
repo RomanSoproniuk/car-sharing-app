@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("cars")
+@RequestMapping("/cars")
 @RequiredArgsConstructor
 public class CarController {
     private final CarService carService;
@@ -38,17 +38,20 @@ public class CarController {
         return carService.getAllCars(pageable);
     }
 
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     @GetMapping("/{carsId}")
     public CarResponseDto getCarById(@PathVariable Long carsId) {
         return carService.getCarById(carsId);
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     @PutMapping("/{carsId}")
     public CarResponseDto updateCar(@PathVariable Long carsId,
                                     @RequestBody CarRequestDto carRequestDto) {
         return carService.updateCarById(carsId, carRequestDto);
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     @PatchMapping("/{carsId}")
     @ResponseStatus(HttpStatus.OK)
     public void updateCarsInventoryById(
@@ -57,6 +60,7 @@ public class CarController {
         carService.updateCarsInventoryById(carsId, carsInventoryRequestDto);
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     @DeleteMapping("/{carsId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCarById(@PathVariable Long carsId) {

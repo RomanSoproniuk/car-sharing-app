@@ -1,0 +1,92 @@
+package mainpackage.carsharingapp.service.impl;
+
+import jakarta.persistence.EntityNotFoundException;
+import java.security.Principal;
+import java.time.LocalDate;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import mainpackage.carsharingapp.dto.RentalRequestDto;
+import mainpackage.carsharingapp.dto.RentalResponseDto;
+import mainpackage.carsharingapp.dto.ReturnRentalRequestDto;
+import mainpackage.carsharingapp.dto.ReturnRentalResponseDto;
+import mainpackage.carsharingapp.exceptions.AccessException;
+import mainpackage.carsharingapp.exceptions.CarException;
+import mainpackage.carsharingapp.mapper.CarMapper;
+import mainpackage.carsharingapp.mapper.RentalMapper;
+import mainpackage.carsharingapp.model.Car;
+import mainpackage.carsharingapp.model.Rental;
+import mainpackage.carsharingapp.model.User;
+import mainpackage.carsharingapp.repository.CarRepository;
+import mainpackage.carsharingapp.repository.RentalRepository;
+import mainpackage.carsharingapp.repository.UserRepository;
+import mainpackage.carsharingapp.service.RentalService;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class RentalServiceImpl implements RentalService {
+    private static final int DECREASE_BY_ONE = 1;
+    private static final int INCREASE_BY_ONE = 1;
+    private final RentalMapper rentalMapper;
+    private final RentalRepository rentalRepository;
+    private final CarRepository carRepository;
+    private final UserRepository userRepository;
+    private final CarMapper carMapper;
+
+    @Override
+    public RentalResponseDto addRental(RentalRequestDto rentalRequestDto) {
+        Rental newRental = rentalMapper.toEntity(rentalRequestDto);
+        Long carIdForUpdate = newRental.getCarId();
+        Car carFromDb = carRepository.findById(carIdForUpdate).orElseThrow(() ->
+                new EntityNotFoundException("Car by id " + carIdForUpdate
+                        + " does not exist in DB"));
+        int currentNumbersOfCar = carFromDb.getInventory();
+        if (currentNumbersOfCar <= 0) {
+            throw new CarException("User can not rent car, since they are not available");
+        }
+        int numbersCarAfterUpdate = currentNumbersOfCar - DECREASE_BY_ONE;
+        carFromDb.setInventory(numbersCarAfterUpdate);
+        Car savedCar = carRepository.save(carFromDb);
+        Rental savedRental = rentalRepository.save(newRental);
+        RentalResponseDto rentalResponseDto = rentalMapper.toDto(savedRental);
+        rentalResponseDto.setCarResponseDto(carMapper.toDto(savedCar));
+        return rentalResponseDto;
+    }
+
+    @Override
+    public ReturnRentalResponseDto addActualReturnDate(
+            Long rentalId,
+            ReturnRentalRequestDto returnRentalRequestDto) {
+        Rental currentRental = rentalRepository.findById(rentalId).orElseThrow(() ->
+                new EntityNotFoundException("Rental by id " + rentalId
+                        + " does not exist in DB"));
+        Long carId = currentRental.getCarId();
+        Car rentalCar = carRepository.findById(carId).get();
+        int currentNumbersOfCar = rentalCar.getInventory();
+        int numbersCarAfterUpdate = currentNumbersOfCar + INCREASE_BY_ONE;
+        rentalCar.setInventory(numbersCarAfterUpdate);
+        carRepository.save(rentalCar);
+        LocalDate actualReturnDate = returnRentalRequestDto.getActualReturnDate();
+        currentRental.setActualReturnDate(actualReturnDate);
+        Rental updateRental = rentalRepository.save(currentRental);
+        return rentalMapper.toReturnRentalResponseRentalDto(updateRental);
+    }
+
+    @Override
+    public RentalResponseDto getRentalByIdForPersonalUser(Long rentalId, Principal principal) {
+        String userEmail = principal.getName();
+        User userFromDbByEmail = userRepository.findByEmail(userEmail).get();
+        Long currentUserId = userFromDbByEmail.getId();
+        Rental rentalFromDbById = rentalRepository.findById(rentalId).orElseThrow(() ->
+                new EntityNotFoundException("Rental by id " + rentalId
+                        + " does not exist in DB"));
+        if (!Objects.equals(currentUserId, rentalFromDbById.getUserId())) {
+            throw new AccessException("You do not have sufficient rights to view data on "
+                    + "this rental");
+        }
+        RentalResponseDto rentalResponseDto = rentalMapper.toDto(rentalFromDbById);
+        Car carFromDbByIdFromRental = carRepository.findById(rentalFromDbById.getCarId()).get();
+        rentalResponseDto.setCarResponseDto(carMapper.toDto(carFromDbByIdFromRental));
+        return rentalResponseDto;
+    }
+}
