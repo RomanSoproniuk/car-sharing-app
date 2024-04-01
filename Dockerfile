@@ -1,5 +1,5 @@
 # Builder stage
-FROM openjdk:17-jdk-alpine as builder
+FROM openjdk:17-jdk-slim as builder
 WORKDIR application
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar

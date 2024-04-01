@@ -32,4 +32,6 @@ public class Rental {
     private Long userId;
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive = true;
 }
