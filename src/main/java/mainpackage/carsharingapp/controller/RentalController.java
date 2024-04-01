@@ -1,12 +1,15 @@
 package mainpackage.carsharingapp.controller;
 
 import java.security.Principal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.RentalRequestDto;
 import mainpackage.carsharingapp.dto.RentalResponseDto;
+import mainpackage.carsharingapp.dto.RentalSearchParameters;
 import mainpackage.carsharingapp.dto.ReturnRentalRequestDto;
 import mainpackage.carsharingapp.dto.ReturnRentalResponseDto;
 import mainpackage.carsharingapp.service.RentalService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +31,14 @@ public class RentalController {
     public RentalResponseDto getRentalByIdForPersonalUser(
             @PathVariable Long rentalId, Principal principal) {
         return rentalService.getRentalByIdForPersonalUser(rentalId, principal);
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    public List<RentalResponseDto> searchRentalsByParams(
+            RentalSearchParameters rentalSearchParameters, Pageable pageable) {
+        return rentalService.searchRentalsByParams(
+                rentalSearchParameters, pageable);
     }
 
     @PostMapping()

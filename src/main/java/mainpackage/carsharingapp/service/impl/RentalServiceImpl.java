@@ -3,10 +3,12 @@ package mainpackage.carsharingapp.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.RentalRequestDto;
 import mainpackage.carsharingapp.dto.RentalResponseDto;
+import mainpackage.carsharingapp.dto.RentalSearchParameters;
 import mainpackage.carsharingapp.dto.ReturnRentalRequestDto;
 import mainpackage.carsharingapp.dto.ReturnRentalResponseDto;
 import mainpackage.carsharingapp.exceptions.AccessException;
@@ -18,8 +20,11 @@ import mainpackage.carsharingapp.model.Rental;
 import mainpackage.carsharingapp.model.User;
 import mainpackage.carsharingapp.repository.CarRepository;
 import mainpackage.carsharingapp.repository.RentalRepository;
+import mainpackage.carsharingapp.repository.RentalSpecificationBuilder;
 import mainpackage.carsharingapp.repository.UserRepository;
 import mainpackage.carsharingapp.service.RentalService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +32,9 @@ import org.springframework.stereotype.Service;
 public class RentalServiceImpl implements RentalService {
     private static final int DECREASE_BY_ONE = 1;
     private static final int INCREASE_BY_ONE = 1;
+    private static final boolean STATUS_AFTER_RETURNING_CAR = false;
+    private static final int MINIMAL_NUMBERS_OF_CARS = 0;
+    private final RentalSpecificationBuilder rentalSpecificationBuilder;
     private final RentalMapper rentalMapper;
     private final RentalRepository rentalRepository;
     private final CarRepository carRepository;
@@ -41,7 +49,7 @@ public class RentalServiceImpl implements RentalService {
                 new EntityNotFoundException("Car by id " + carIdForUpdate
                         + " does not exist in DB"));
         int currentNumbersOfCar = carFromDb.getInventory();
-        if (currentNumbersOfCar <= 0) {
+        if (currentNumbersOfCar <= MINIMAL_NUMBERS_OF_CARS) {
             throw new CarException("User can not rent car, since they are not available");
         }
         int numbersCarAfterUpdate = currentNumbersOfCar - DECREASE_BY_ONE;
@@ -68,6 +76,7 @@ public class RentalServiceImpl implements RentalService {
         carRepository.save(rentalCar);
         LocalDate actualReturnDate = returnRentalRequestDto.getActualReturnDate();
         currentRental.setActualReturnDate(actualReturnDate);
+        currentRental.setActive(STATUS_AFTER_RETURNING_CAR);
         Rental updateRental = rentalRepository.save(currentRental);
         return rentalMapper.toReturnRentalResponseRentalDto(updateRental);
     }
@@ -88,5 +97,16 @@ public class RentalServiceImpl implements RentalService {
         Car carFromDbByIdFromRental = carRepository.findById(rentalFromDbById.getCarId()).get();
         rentalResponseDto.setCarResponseDto(carMapper.toDto(carFromDbByIdFromRental));
         return rentalResponseDto;
+    }
+
+    @Override
+    public List<RentalResponseDto> searchRentalsByParams(
+            RentalSearchParameters rentalSearchParameters,
+            Pageable pageable) {
+        Specification<Rental> rentalSpecification
+                = rentalSpecificationBuilder.build(rentalSearchParameters);
+        return rentalRepository.findAll(rentalSpecification, pageable).stream()
+                .map(rentalMapper::toDto)
+                .toList();
     }
 }
