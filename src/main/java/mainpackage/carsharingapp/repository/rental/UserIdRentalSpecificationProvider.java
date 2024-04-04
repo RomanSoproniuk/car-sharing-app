@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserIdSpecificationProvider implements SpecificationProvider<Rental> {
+public class UserIdRentalSpecificationProvider implements SpecificationProvider<Rental> {
     public Specification<Rental> getSpecification(Object[] params) {
         return (root, query, criteriaBuilder) -> root.get("userId")
                 .in(Arrays.stream(params).toArray());

@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RentalSpecificationBuilder implements SpecificationBuilder<Rental> {
+public class RentalSpecificationBuilder
+        implements SpecificationBuilder<Rental, RentalSearchParameters> {
+    private static final byte MINIMAL_QUANTITY_PARAMETERS = 1;
     private static final String IS_ACTIVE_KEY = "isActive";
     private static final String USER_ID_KEY = "userId";
     private final SpecificationProviderManager<Rental> rentalSpecificationProviderManager;
@@ -17,13 +19,13 @@ public class RentalSpecificationBuilder implements SpecificationBuilder<Rental> 
     public Specification<Rental> build(RentalSearchParameters rentalSearchParameters) {
         Specification<Rental> spec = Specification.where(null);
         if (rentalSearchParameters.isActives() != null
-                && rentalSearchParameters.isActives().length > 0) {
+                && rentalSearchParameters.isActives().length >= MINIMAL_QUANTITY_PARAMETERS) {
             spec = spec.and(rentalSpecificationProviderManager
                     .getSpecificationProvider(IS_ACTIVE_KEY).getSpecification(
                             rentalSearchParameters.isActives()));
         }
         if (rentalSearchParameters.usersId() != null
-                && rentalSearchParameters.usersId().length > 0) {
+                && rentalSearchParameters.usersId().length >= MINIMAL_QUANTITY_PARAMETERS) {
             spec = spec.and(rentalSpecificationProviderManager
                     .getSpecificationProvider(USER_ID_KEY).getSpecification(
                             rentalSearchParameters.usersId()));

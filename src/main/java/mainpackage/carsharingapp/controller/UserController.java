@@ -1,5 +1,7 @@
 package mainpackage.carsharingapp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.RoleRequestDto;
@@ -19,9 +21,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
+@Tag(name = "User API", description = """
+With the help of this controller, you can perform certain actions 
+with the user, you can read more about it below
+        """)
 public class UserController {
     private final UserService userService;
 
+    @Operation(summary = "Update users roles", description = """ 
+        When using this API, you can change the access level for this user, 
+        it is worth noting that only users with the MANAGER access level 
+        can use this endpoint
+            """)
     @PutMapping("/{id}/role")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_MANAGER')")
@@ -31,11 +42,18 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @Operation(summary = "Get profile info", description = """ 
+        With the help of this endpoint, you can get detailed 
+        information about the user, namely his personal data
+            """)
     public UserProfileResponseDto getProfileInfo(Principal principal) {
         return userService.getProfileInfo(principal);
     }
 
     @PutMapping("/me")
+    @Operation(summary = "Update profile info", description = """ 
+        Using this endpoint, the user can change his personal data
+            """)
     public UserProfileResponseDto updateProfileInfo(
             Principal principal,
             @RequestBody UserUpdateProfileRequestDto userUpdateProfileRequestDto) {

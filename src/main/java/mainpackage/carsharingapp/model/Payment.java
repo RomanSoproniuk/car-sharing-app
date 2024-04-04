@@ -19,28 +19,30 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "rental_id")
+    @Column(name = "rental_id", nullable = false)
     private Long rentalId;
-    @Column(name = "session_url")
-    private URL sessionUrl; //URL for the payment session with payment provider
-    @Column(name = "session_id")
-    private String sessionId; //ID of the payment session
-    @Column(name = "amount_to_pay")
-    private BigDecimal amountToPay; //calculated rental total price
-    @Column(name = "status")
+    @Column(name = "session_url", nullable = false)
+    private URL sessionUrl;
+    @Column(name = "session_id", nullable = false)
+    private String sessionId;
+    @Column(name = "amount_to_pay", nullable = false)
+    private BigDecimal amountToPay;
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
-    @Column(name = "type")
+    @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private Type type;
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 
     public enum Status {
-        PENDING, //в очікуванні
-        PAID // //оплачено
+        PENDING,
+        PAID
     }
 
     public enum Type {
-        PAYMENT, // оплата
-        FINE // штраф
+        PAYMENT,
+        FINE
     }
 }
