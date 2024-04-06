@@ -26,4 +26,20 @@ public class UserRegistrationRequestDto {
     @NotBlank
     @Size(min = 8, max = 20)
     private String repeatPassword;
+
+    public UserRegistrationRequestDto() {
+    }
+
+    public UserRegistrationRequestDto(
+            String email,
+            String firstName,
+            String lastName,
+            String password,
+            String repeatPassword) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.repeatPassword = repeatPassword;
+    }
 }

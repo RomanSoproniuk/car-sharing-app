@@ -19,4 +19,16 @@ public class CarRequestDto {
     private Integer inventory;
     @NotNull
     private BigDecimal dailyFee;
+
+    public CarRequestDto() {
+    }
+
+    public CarRequestDto(String model, String brand, Car.Type type,
+                         Integer inventory, BigDecimal dailyFee) {
+        this.model = model;
+        this.brand = brand;
+        this.type = type;
+        this.inventory = inventory;
+        this.dailyFee = dailyFee;
+    }
 }

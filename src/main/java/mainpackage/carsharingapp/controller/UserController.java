@@ -6,6 +6,7 @@ import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.RoleRequestDto;
 import mainpackage.carsharingapp.dto.UserProfileResponseDto;
+import mainpackage.carsharingapp.dto.UserResponseDto;
 import mainpackage.carsharingapp.dto.UserUpdateProfileRequestDto;
 import mainpackage.carsharingapp.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -36,9 +37,9 @@ public class UserController {
     @PutMapping("/{id}/role")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    public void updateUserRole(@RequestBody RoleRequestDto roleRequestDto,
-                               @PathVariable Long id) {
-        userService.updateUserRole(roleRequestDto, id);
+    public UserResponseDto updateUserRole(@RequestBody RoleRequestDto roleRequestDto,
+                                          @PathVariable Long id) {
+        return userService.updateUserRole(roleRequestDto, id);
     }
 
     @GetMapping("/me")

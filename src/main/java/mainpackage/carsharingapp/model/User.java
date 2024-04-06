@@ -41,6 +41,35 @@ public class User implements UserDetails {
     private Set<Role> roles = new LinkedHashSet<>();
     private boolean isDeleted = false;
 
+    public User() {
+    }
+
+    public User(String email, String firstName, String lastName, String password) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+    }
+
+    public User(Long id, String email, String firstName, String lastName, String password) {
+        this.id = id;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+    }
+
+    public User(Long id, String email,
+                String firstName,
+                String lastName, String password, boolean isDeleted) {
+        this.id = id;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.isDeleted = isDeleted;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()

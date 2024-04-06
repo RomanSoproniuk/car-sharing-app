@@ -8,4 +8,11 @@ import lombok.Setter;
 @Setter
 public class ReturnRentalRequestDto {
     private LocalDate actualReturnDate;
+
+    public ReturnRentalRequestDto() {
+    }
+
+    public ReturnRentalRequestDto(LocalDate actualReturnDate) {
+        this.actualReturnDate = actualReturnDate;
+    }
 }
