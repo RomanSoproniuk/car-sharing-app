@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/changes/0008-create-rentals-table.yaml
   - include:
       file: db/changelog/changes/0009-create-payments-table.yaml
+  - include:
+      file: db/changelog/changes/0010-create-telegram-users-table.yaml
