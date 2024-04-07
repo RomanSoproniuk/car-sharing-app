@@ -110,7 +110,7 @@ public class PaymentServiceImpl implements PaymentService {
         Specification<Rental> rentalSpecification
                 = rentalSpecificationBuilder.build(rentalSearchParameters);
         if (roleManager.isPresent()) {
-            return rentalRepository.findAll(rentalSpecification).stream()
+            return rentalRepository.findAll(rentalSpecification, pageable).stream()
                     .map(r -> paymentMapper.toDto(paymentRepository.findById(r.getId()).get()))
                     .toList();
         } else {
@@ -119,7 +119,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .get().equals(user.getId())) {
                 throw new RoleException("You have not access to see not you own payments");
             }
-            return rentalRepository.findAll(rentalSpecification).stream()
+            return rentalRepository.findAll(rentalSpecification, pageable).stream()
                     .map(r -> paymentMapper.toDto(paymentRepository.findById(r.getId()).get()))
                     .toList();
         }

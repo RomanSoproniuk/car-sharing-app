@@ -11,9 +11,23 @@ import mainpackage.carsharingapp.model.Payment;
 public class PaymentResponseDto {
     private Long id;
     private Long rentalId;
-    private URL sessionUrl; //URL for the payment session with payment provider
-    private String sessionId; //ID of the payment session
-    private BigDecimal amountToPay; //calculated rental total price
+    private URL sessionUrl;
+    private String sessionId;
+    private BigDecimal amountToPay;
     private Payment.Status status;
     private Payment.Type type;
+
+    public PaymentResponseDto() {
+    }
+
+    public PaymentResponseDto(Long id, Long rentalId, URL sessionUrl, String sessionId,
+                              BigDecimal amountToPay, Payment.Status status, Payment.Type type) {
+        this.id = id;
+        this.rentalId = rentalId;
+        this.sessionUrl = sessionUrl;
+        this.sessionId = sessionId;
+        this.amountToPay = amountToPay;
+        this.status = status;
+        this.type = type;
+    }
 }

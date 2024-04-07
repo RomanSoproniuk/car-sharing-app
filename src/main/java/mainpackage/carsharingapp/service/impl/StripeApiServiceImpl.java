@@ -51,6 +51,7 @@ public class StripeApiServiceImpl implements StripeApiService {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
+    private final PaymentService paymentService;
     private UriComponents successUrl;
     private UriComponents cancelUrl;
     @Value("${stripe.secret.key}")
@@ -63,7 +64,6 @@ public class StripeApiServiceImpl implements StripeApiService {
     private String successPath;
     @Value("${cancel.path}")
     private String cancelPath;
-    private final PaymentService paymentService;
 
     @Override
     public PaymentResponseDto createSession(PaymentRequestDto paymentRequestDto,
@@ -136,6 +136,7 @@ public class StripeApiServiceImpl implements StripeApiService {
 
     private Price getPrice(BigDecimal moneyToAmount, PaymentRequestDto paymentRequestDto)
             throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
         PriceCreateParams params = PriceCreateParams.builder()
                 .setCurrency(USD_CURRENCY)
                 .setUnitAmount(moneyToAmount.longValue())
@@ -150,6 +151,7 @@ public class StripeApiServiceImpl implements StripeApiService {
 
     private Product getProduct(PaymentRequestDto paymentRequestDto)
             throws StripeException {
+        Stripe.apiKey = stripeSecretKey;
         Long rentalId = paymentRequestDto.getRentalId();
         Rental rental = rentalRepository.findById(rentalId).get();
         Car car = carRepository.findById(rental.getCarId()).get();

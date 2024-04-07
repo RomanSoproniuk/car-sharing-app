@@ -1,6 +1,5 @@
 package mainpackage.carsharingapp.service.impl;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.RentalResponseDto;
@@ -22,7 +21,7 @@ public class TelegramNotificationService implements NotificationService {
             throws TelegramApiException {
         List<TelegramUser> allTelegramUsers = telegramUserRepository.findAll();
         if (allTelegramUsers.isEmpty()) {
-            throw new EntityNotFoundException("No users in database");
+            return;
         }
         for (TelegramUser user : allTelegramUsers) {
             Long chatId = user.getId();

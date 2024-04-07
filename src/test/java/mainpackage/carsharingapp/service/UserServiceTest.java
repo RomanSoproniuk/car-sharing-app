@@ -16,6 +16,7 @@ import mainpackage.carsharingapp.repository.RoleRepository;
 import mainpackage.carsharingapp.repository.UserRepository;
 import mainpackage.carsharingapp.service.impl.UserServiceImpl;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,50 @@ public class UserServiceTest {
     private BCryptPasswordEncoder passwordEncoder;
     @InjectMocks
     private UserServiceImpl userService;
+    private UserRegistrationRequestDto userRegistrationRequestDto;
+    private Role userRole;
+    private Role roleForUpdate;
+    private User user;
+    private UserResponseDto userResponseDto;
+    private Long userId;
+    private String rawPassword;
+    private String encodedPassword;
+    private RoleRequestDto roleRequestDto;
+    private Principal principal;
+    private UserProfileResponseDto userProfileResponseDto;
+    private UserUpdateProfileRequestDto userUpdateProfileRequestDto;
+    private User updatedUser;
+    private UserProfileResponseDto userUpdatedProfileResponseDto;
+
+    @BeforeEach
+    public void setUp() {
+        roleRequestDto = new RoleRequestDto("MANAGER");
+        rawPassword = "12345678";
+        encodedPassword = "$2a$10$aSRC5P15RuyGCkIUQSvV7espH9sESixV/jDpsQomHruZlzNRck0Fy";
+        userId = 2L;
+        userRegistrationRequestDto = new UserRegistrationRequestDto("bob@gmail.com",
+                "Bob", "Alison", "12345678", "12345678");
+        userRole = new Role(2L, Role.RoleName.CUSTOMER);
+        roleForUpdate = new Role(1L, Role.RoleName.MANAGER);
+        user = new User(2L, "bob@gmail.com", "Bob", "Alison",
+                "$2a$10$aSRC5P15RuyGCkIUQSvV7espH9sESixV/jDpsQomHruZlzNRck0Fy", false);
+        user.getRoles().add(userRole);
+        userResponseDto = new UserResponseDto(2L, "bob@gmail.com");
+        userProfileResponseDto = new UserProfileResponseDto("bob@gmail.com", "Bob", "Alison", null);
+        userUpdateProfileRequestDto = new UserUpdateProfileRequestDto("alice@gmail.com", "Alice",
+                "Bobson");
+        updatedUser = new User(2L, "alice@gmail.com", "Alice", "Bobson",
+                "$2a$10$aSRC5P15RuyGCkIUQSvV7espH9sESixV/jDpsQomHruZlzNRck0Fy", false);
+        userUpdatedProfileResponseDto = new UserProfileResponseDto("alice@gmail.com", "Alice",
+                "Bobson", "If you changed your email, please log in with new email"
+        );
+        principal = new Principal() {
+            @Override
+            public String getName() {
+                return "bob@gmail.com";
+            }
+        };
+    }
 
     @Test
     @DisplayName("""
@@ -47,30 +92,11 @@ public class UserServiceTest {
     public void registerUser_ReturnRegisteredUser_Success()
             throws RegistrationException {
         //given
-        UserRegistrationRequestDto userRegistrationRequestDto
-                = new UserRegistrationRequestDto(
-                "bob@gmail.com",
-                "Bob",
-                "Alison",
-                "12345678",
-                "12345678");
-        Role userRole = new Role();
-        userRole.setName(Role.RoleName.CUSTOMER);
-        userRole.setId(2L);
-        User savedUser = new User(
-                2L,
-                "bob@gmail.com",
-                "Bob",
-                "Alison",
-                "$2a$10$aSRC5P15RuyGCkIUQSvV7espH9sESixV/jDpsQomHruZlzNRck0Fy",
-                false);
-        savedUser.getRoles().add(userRole);
-        UserResponseDto expectedResponseDto = new UserResponseDto(2L, "bob@gmail.com");
-        Mockito.when(roleRepository.findById(2L)).thenReturn(Optional.of(userRole));
-        Mockito.when(passwordEncoder.encode("12345678"))
-                .thenReturn("$2a$10$aSRC5P15RuyGCkIUQSvV7espH9sESixV/jDpsQomHruZlzNRck0Fy");
-        Mockito.when(userMapper.toUserResponse(savedUser)).thenReturn(expectedResponseDto);
-        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(savedUser);
+        UserResponseDto expectedResponseDto = userResponseDto;
+        Mockito.when(roleRepository.findById(userId)).thenReturn(Optional.of(userRole));
+        Mockito.when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
+        Mockito.when(userMapper.toUserResponse(user)).thenReturn(expectedResponseDto);
+        Mockito.when(userRepository.save(Mockito.any())).thenReturn(user);
         //when
         UserResponseDto actualResponseDto
                 = userService.registerUser(userRegistrationRequestDto);
@@ -84,24 +110,13 @@ public class UserServiceTest {
             """)
     public void updateUserRole_CorrectUpdateRoleUser_Success() {
         //given
-        RoleRequestDto roleRequestDto = new RoleRequestDto("MANAGER");
-        Role roleForUpdate = new Role(1L, Role.RoleName.MANAGER);
-        Long userId = 2L;
-        User savedUser = new User(
-                2L,
-                "bob@gmail.com",
-                "Bob",
-                "Alison",
-                "$2a$10$aSRC5P15RuyGCkIUQSvV7espH9sESixV/jDpsQomHruZlzNRck0Fy",
-                false);
-        savedUser.getRoles().add(new Role(2L, Role.RoleName.CUSTOMER));
-        UserResponseDto expected = new UserResponseDto(2L, "bob@gmail.com");
+        UserResponseDto expected = userResponseDto;
         Mockito.when(roleMapper.toEntity(roleRequestDto)).thenReturn(roleForUpdate);
-        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(savedUser));
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(roleRepository.findByName(roleForUpdate.getName()))
                 .thenReturn(Optional.of(roleForUpdate));
-        Mockito.when(userRepository.save(Mockito.any())).thenReturn(savedUser);
-        Mockito.when(userMapper.toUserResponse(savedUser)).thenReturn(expected);
+        Mockito.when(userRepository.save(Mockito.any())).thenReturn(user);
+        Mockito.when(userMapper.toUserResponse(user)).thenReturn(expected);
         //when
         UserResponseDto actual = userService.updateUserRole(roleRequestDto, userId);
         System.out.println();
@@ -115,26 +130,10 @@ public class UserServiceTest {
             """)
     public void getProfileInfo_ReturnCorrectProfileInfo_Success() {
         //given
-        User userFormDb = new User(
-                2L,
-                "bob@gmail.com",
-                "Bob",
-                "Alison",
-                "$2a$10$aSRC5P15RuyGCkIUQSvV7espH9sESixV/jDpsQomHruZlzNRck0Fy",
-                false);
-        Principal principal = new Principal() {
-            @Override
-            public String getName() {
-                return "bob@gmail.com";
-            }
-        };
-        UserProfileResponseDto expected = new UserProfileResponseDto(
-                "bob@gmail.com",
-                "Bob",
-                "Alison",
-                null);
-        Mockito.when(userRepository.findByEmail("bob@gmail.com")).thenReturn(Optional.of(userFormDb));
-        Mockito.when(userMapper.toUserProfileResponse(userFormDb)).thenReturn(expected);
+        UserProfileResponseDto expected = userProfileResponseDto;
+        Mockito.when(userRepository.findByEmail(user.getEmail()))
+                .thenReturn(Optional.of(user));
+        Mockito.when(userMapper.toUserProfileResponse(user)).thenReturn(expected);
         //when
         UserProfileResponseDto actual = userService.getProfileInfo(principal);
         //then
@@ -147,39 +146,11 @@ public class UserServiceTest {
             """)
     public void updateProfileInfo_UpdateCorrectProfileInfo_Success() {
         //given
-        Principal principal = new Principal() {
-            @Override
-            public String getName() {
-                return "bob@gmail.com";
-            }
-        };
-        User userFormDb = new User(
-                2L,
-                "bob@gmail.com",
-                "Bob",
-                "Alison",
-                "$2a$10$aSRC5P15RuyGCkIUQSvV7espH9sESixV/jDpsQomHruZlzNRck0Fy",
-                false);
-        UserUpdateProfileRequestDto userUpdateProfileRequestDto
-                = new UserUpdateProfileRequestDto(
-                "alice@gmail.com",
-                "Alice",
-                "Bobson");
-        User updatedUser = new User(
-                2L,
-                "alice@gmail.com",
-                "Alice",
-                "Bobson",
-                "$2a$10$aSRC5P15RuyGCkIUQSvV7espH9sESixV/jDpsQomHruZlzNRck0Fy",
-                false);
-        UserProfileResponseDto expected = new UserProfileResponseDto(
-                "alice@gmail.com",
-                "Alice",
-                "Bobson",
-                "If you changed your email, please log in with new email"
-        );
-        Mockito.when(userRepository.findByEmail("bob@gmail.com")).thenReturn(Optional.of(userFormDb));
-        Mockito.when(userRepository.findByEmail("alice@gmail.com")).thenReturn(Optional.empty());
+        UserProfileResponseDto expected = userUpdatedProfileResponseDto;
+        Mockito.when(userRepository.findByEmail(user.getEmail()))
+                .thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByEmail(updatedUser.getEmail()))
+                .thenReturn(Optional.empty());
         Mockito.when(userRepository.save(Mockito.any())).thenReturn(updatedUser);
         Mockito.when(userMapper.toUserProfileResponse(updatedUser)).thenReturn(expected);
         //when

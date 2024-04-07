@@ -56,8 +56,8 @@ public class CarServiceTest {
                 1, BigDecimal.valueOf(30L), false);
         updatedCar = new Car(1L, "X5", "BMW", Car.Type.HATCHBACK,
                 1, BigDecimal.valueOf(30L), false);
-        firstCarResponseDto = new CarResponseDto(1L, "Q8", "Audi"
-                , Car.Type.SEDAN, 5, BigDecimal.valueOf(20L));
+        firstCarResponseDto = new CarResponseDto(1L, "Q8", "Audi",
+                Car.Type.SEDAN, 5, BigDecimal.valueOf(20L));
         secondCarResponseDto = new CarResponseDto(2L, "X5", "BMW",
                 Car.Type.HATCHBACK, 1, BigDecimal.valueOf(30L));
         updatedCarResponseDto = new CarResponseDto(2L, "X5", "BMW",
@@ -124,11 +124,11 @@ public class CarServiceTest {
             """)
     public void updateCarById_CorrectUpdateCarById() {
         //given
-        CarResponseDto expected = updatedCarResponseDto;
         Mockito.when(carRepository.findById(firstCarId)).thenReturn(Optional.of(firstCar));
         Mockito.when(carMapper.toEntity(secondCarRequestDto)).thenReturn(secondCar);
         Mockito.when(carRepository.save(Mockito.any())).thenReturn(updatedCar);
         Mockito.when(carMapper.toDto(updatedCar)).thenReturn(updatedCarResponseDto);
+        CarResponseDto expected = updatedCarResponseDto;
         //when
         CarResponseDto actual = carService.updateCarById(firstCarId, secondCarRequestDto);
         //then

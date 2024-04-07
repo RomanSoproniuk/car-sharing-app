@@ -4,6 +4,11 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.math.BigDecimal;
+import java.security.Principal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import mainpackage.carsharingapp.dto.CarResponseDto;
 import mainpackage.carsharingapp.dto.RentalRequestDto;
 import mainpackage.carsharingapp.dto.RentalResponseDto;
@@ -37,12 +42,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.math.BigDecimal;
-import java.security.Principal;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class RentalServiceTest {
@@ -87,8 +86,8 @@ public class RentalServiceTest {
     public void setUp() {
         user = new User(2L, "bob@gmail.com", "Bob", "Alison",
                 "12345678", false);
-        carResponseDto = new CarResponseDto(1L, "Q8", "Audi"
-                , Car.Type.SEDAN, 5, BigDecimal.valueOf(20L));
+        carResponseDto = new CarResponseDto(1L, "Q8", "Audi",
+                Car.Type.SEDAN, 5, BigDecimal.valueOf(20L));
         rentalResponseDto = new RentalResponseDto(1L, LocalDate.of(2024, 4, 10),
                 LocalDate.of(2024, 5, 20), null, 1L,
                 2L,carResponseDto);
@@ -127,7 +126,8 @@ public class RentalServiceTest {
         };
         rentalSpecification = new Specification<Rental>() {
             @Override
-            public Predicate toPredicate(Root<Rental> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+            public Predicate toPredicate(Root<Rental> root, CriteriaQuery<?> query,
+                                         CriteriaBuilder criteriaBuilder) {
                 return null;
             }
         };
@@ -139,14 +139,15 @@ public class RentalServiceTest {
             """)
     public void addRental_AddNewRentalToDb_Success() throws TelegramApiException {
         //given
-        RentalResponseDto expected = rentalResponseDto;
         Mockito.when(rentalMapper.toEntity(rentalRequestDto)).thenReturn(rental);
         Mockito.when(carRepository.findById(carId)).thenReturn(Optional.of(car));
         Mockito.when(carRepository.save(Mockito.any())).thenReturn(savedCarAfterCreateRental);
         Mockito.when(rentalRepository.save(Mockito.any())).thenReturn(rental);
         Mockito.when(rentalMapper.toDto(rental)).thenReturn(rentalResponseDto);
         Mockito.when(carMapper.toDto(Mockito.any())).thenReturn(carResponseDto);
-        Mockito.doNothing().when(telegramNotificationService).sendMessageNewRentalCreation(rentalResponseDto);
+        Mockito.doNothing().when(telegramNotificationService)
+                .sendMessageNewRentalCreation(rentalResponseDto);
+        RentalResponseDto expected = rentalResponseDto;
         //when
         RentalResponseDto actual = rentalService.addRental(rentalRequestDto);
         //then
@@ -159,14 +160,17 @@ public class RentalServiceTest {
             """)
     public void addActualReturnDate_CorrectAddActualReturnDate_Success() {
         //given
-        ReturnRentalResponseDto expected = returnRentalResponseDto;
         Mockito.when(rentalRepository.findById(rentalId)).thenReturn(Optional.of(rental));
         Mockito.when(carRepository.findById(carId)).thenReturn(Optional.of(car));
-        Mockito.when(carRepository.save(Mockito.any())).thenReturn(savedCarAfterAddActualReturnDate);
+        Mockito.when(carRepository.save(Mockito.any()))
+                .thenReturn(savedCarAfterAddActualReturnDate);
         Mockito.when(rentalRepository.save(Mockito.any())).thenReturn(rentalWithActualReturnDate);
-        Mockito.when(rentalMapper.toReturnRentalResponseRentalDto(Mockito.any())).thenReturn(returnRentalResponseDto);
+        Mockito.when(rentalMapper.toReturnRentalResponseRentalDto(Mockito.any()))
+                .thenReturn(returnRentalResponseDto);
+        ReturnRentalResponseDto expected = returnRentalResponseDto;
         //when
-        ReturnRentalResponseDto actual = rentalService.addActualReturnDate(rentalId, returnRentalRequestDto);
+        ReturnRentalResponseDto actual
+                = rentalService.addActualReturnDate(rentalId, returnRentalRequestDto);
         //then
         EqualsBuilder.reflectionEquals(expected, actual);
     }
@@ -177,12 +181,12 @@ public class RentalServiceTest {
             """)
     public void getRentalByIdForPersonalUser_ReturnCorrectRental_Success() {
         //given
-        RentalResponseDto expected = rentalResponseDto;
         Mockito.when(userRepository.findByEmail(Mockito.any())).thenReturn(Optional.of(user));
         Mockito.when(rentalRepository.findById(Mockito.any())).thenReturn(Optional.of(rental));
         Mockito.when(rentalMapper.toDto(Mockito.any())).thenReturn(rentalResponseDto);
         Mockito.when(carRepository.findById(carId)).thenReturn(Optional.of(car));
         Mockito.when(carMapper.toDto(Mockito.any())).thenReturn(carResponseDto);
+        RentalResponseDto expected = rentalResponseDto;
         //when
         RentalResponseDto actual = rentalService.getRentalByIdForPersonalUser(1L, principal);
         //then
@@ -195,10 +199,12 @@ public class RentalServiceTest {
             """)
     public void searchRentalsByParams_ReturnCorrectRental_Success() {
         //given
-        List<RentalResponseDto> expected = List.of(rentalResponseDto);
-        Mockito.when(rentalSpecificationBuilder.build(rentalSearchParameters)).thenReturn(rentalSpecification);
-        Mockito.when(rentalRepository.findAll(rentalSpecification, pageable)).thenReturn(rentalPage);
+        Mockito.when(rentalSpecificationBuilder.build(rentalSearchParameters))
+                .thenReturn(rentalSpecification);
+        Mockito.when(rentalRepository.findAll(rentalSpecification, pageable))
+                .thenReturn(rentalPage);
         Mockito.when(rentalMapper.toDto(rental)).thenReturn(rentalResponseDto);
+        List<RentalResponseDto> expected = List.of(rentalResponseDto);
         //when
         List<RentalResponseDto> actual =
                 rentalService.searchRentalsByParams(rentalSearchParameters, pageable);
