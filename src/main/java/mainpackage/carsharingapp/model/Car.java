@@ -22,15 +22,16 @@ public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(name = "model", nullable = false)
     private String model;
-    @Column(nullable = false)
+    @Column(name = "brand",nullable = false)
     private String brand;
     @Enumerated(EnumType.STRING)
-    @Column(name = "type",
-            nullable = false)
+    @Column(name = "type", nullable = false)
     private Type type;
+    @Column(name = "inventory", nullable = false)
     private int inventory;
+    @Column(name = "daily_fee", nullable = false)
     private BigDecimal dailyFee = BigDecimal.ZERO;
     @Column (name = "is_deleted", nullable = false)
     private boolean isDeleted = false;

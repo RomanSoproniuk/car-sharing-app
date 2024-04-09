@@ -15,3 +15,5 @@ databaseChangeLog:
       file: db/changelog/changes/0007-insert-into-users-roles-table.yaml
   - include:
       file: db/changelog/changes/0008-create-rentals-table.yaml
+  - include:
+      file: db/changelog/changes/0009-create-payments-table.yaml

@@ -20,15 +20,15 @@ public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "rental_date")
+    @Column(name = "rental_date", nullable = false)
     private LocalDate rentalDate;
-    @Column(name = "return_date")
+    @Column(name = "return_date", nullable = false)
     private LocalDate returnDate;
-    @Column(name = "actual_return_date")
+    @Column(name = "actual_return_date", nullable = false)
     private LocalDate actualReturnDate;
-    @Column(name = "car_id")
+    @Column(name = "car_id", nullable = false)
     private Long carId;
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Long userId;
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;

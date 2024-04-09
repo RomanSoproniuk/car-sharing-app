@@ -13,6 +13,7 @@ import mainpackage.carsharingapp.dto.ReturnRentalRequestDto;
 import mainpackage.carsharingapp.dto.ReturnRentalResponseDto;
 import mainpackage.carsharingapp.exceptions.AccessException;
 import mainpackage.carsharingapp.exceptions.CarException;
+import mainpackage.carsharingapp.exceptions.RentalException;
 import mainpackage.carsharingapp.mapper.CarMapper;
 import mainpackage.carsharingapp.mapper.RentalMapper;
 import mainpackage.carsharingapp.model.Car;
@@ -70,6 +71,10 @@ public class RentalServiceImpl implements RentalService {
                         + " does not exist in DB"));
         Long carId = currentRental.getCarId();
         Car rentalCar = carRepository.findById(carId).get();
+        if (currentRental.getActualReturnDate() != null) {
+            throw new RentalException("You can not add actual return date twice. Rental by id "
+                + currentRental.getId() + " has the actual return date");
+        }
         int currentNumbersOfCar = rentalCar.getInventory();
         int numbersCarAfterUpdate = currentNumbersOfCar + INCREASE_BY_ONE;
         rentalCar.setInventory(numbersCarAfterUpdate);

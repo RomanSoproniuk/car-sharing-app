@@ -7,14 +7,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IsActiveSpecificationProvider implements SpecificationProvider<Rental> {
+public class UserIdRentalSpecificationProvider implements SpecificationProvider<Rental> {
     public Specification<Rental> getSpecification(Object[] params) {
-        return (root, query, criteriaBuilder) -> root.get("isActive")
+        return (root, query, criteriaBuilder) -> root.get("userId")
                 .in(Arrays.stream(params).toArray());
     }
 
     @Override
     public String getKey() {
-        return "isActive";
+        return "userId";
     }
 }
