@@ -8,12 +8,14 @@ import jakarta.persistence.Id;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity(name = "rentals")
 @Getter
 @Setter
+@ToString
 @SQLDelete(sql = "UPDATE rentals SET is_deleted = TRUE WHERE id = ?")
 @SQLRestriction(value = "is_deleted = FALSE")
 public class Rental {
@@ -24,7 +26,7 @@ public class Rental {
     private LocalDate rentalDate;
     @Column(name = "return_date", nullable = false)
     private LocalDate returnDate;
-    @Column(name = "actual_return_date", nullable = false)
+    @Column(name = "actual_return_date", nullable = true)
     private LocalDate actualReturnDate;
     @Column(name = "car_id", nullable = false)
     private Long carId;

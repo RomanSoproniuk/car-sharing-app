@@ -27,6 +27,7 @@ import mainpackage.carsharingapp.service.RentalService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +42,7 @@ public class RentalServiceImpl implements RentalService {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
     private final CarMapper carMapper;
+    private final TelegramNotificationService telegramNotificationService;
 
     @Override
     public RentalResponseDto addRental(RentalRequestDto rentalRequestDto) {
@@ -59,6 +61,11 @@ public class RentalServiceImpl implements RentalService {
         Rental savedRental = rentalRepository.save(newRental);
         RentalResponseDto rentalResponseDto = rentalMapper.toDto(savedRental);
         rentalResponseDto.setCarResponseDto(carMapper.toDto(savedCar));
+        try {
+            telegramNotificationService.sendMessageNewRentalCreation(rentalResponseDto);
+        } catch (TelegramApiException e) {
+            throw new RentalException("Cant send notification to Telegram chat about new rental");
+        }
         return rentalResponseDto;
     }
 
