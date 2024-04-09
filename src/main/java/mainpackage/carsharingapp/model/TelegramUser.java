@@ -12,4 +12,12 @@ public class TelegramUser {
     @Id
     private Long id;
     private String userName;
+
+    public TelegramUser() {
+    }
+
+    public TelegramUser(Long id, String userName) {
+        this.id = id;
+        this.userName = userName;
+    }
 }
