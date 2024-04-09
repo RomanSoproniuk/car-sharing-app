@@ -11,4 +11,14 @@ public class RentalRequestDto {
     private LocalDate returnDate;
     private Long carId;
     private Long userId;
+
+    public RentalRequestDto() {
+    }
+
+    public RentalRequestDto(LocalDate rentalDate, LocalDate returnDate, Long carId, Long userId) {
+        this.rentalDate = rentalDate;
+        this.returnDate = returnDate;
+        this.carId = carId;
+        this.userId = userId;
+    }
 }

@@ -12,7 +12,7 @@ public interface UserService {
     UserResponseDto registerUser(UserRegistrationRequestDto userRegistrationRequestDto)
             throws RegistrationException;
 
-    void updateUserRole(RoleRequestDto roleRequestDto, Long id);
+    UserResponseDto updateUserRole(RoleRequestDto roleRequestDto, Long id);
 
     UserProfileResponseDto getProfileInfo(Principal principal);
 

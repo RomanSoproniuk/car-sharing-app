@@ -16,4 +16,19 @@ public class RentalResponseDto {
     private Long userId;
     private Long carId;
     private CarResponseDto carResponseDto;
+
+    public RentalResponseDto() {
+    }
+
+    public RentalResponseDto(Long id, LocalDate rentalDate, LocalDate returnDate,
+                             LocalDate actualReturnDate, Long userId, Long carId,
+                             CarResponseDto carResponseDto) {
+        this.id = id;
+        this.rentalDate = rentalDate;
+        this.returnDate = returnDate;
+        this.actualReturnDate = actualReturnDate;
+        this.userId = userId;
+        this.carId = carId;
+        this.carResponseDto = carResponseDto;
+    }
 }

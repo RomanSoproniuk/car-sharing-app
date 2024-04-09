@@ -23,6 +23,14 @@ public class Role {
             unique = true)
     private RoleName name;
 
+    public Role() {
+    }
+
+    public Role(Long id, RoleName name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public enum RoleName {
         MANAGER,
         CUSTOMER

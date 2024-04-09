@@ -9,4 +9,12 @@ import mainpackage.carsharingapp.model.Payment;
 public class PaymentRequestDto {
     private Long rentalId;
     private Payment.Type type;
+
+    public PaymentRequestDto() {
+    }
+
+    public PaymentRequestDto(Long rentalId, Payment.Type type) {
+        this.rentalId = rentalId;
+        this.type = type;
+    }
 }

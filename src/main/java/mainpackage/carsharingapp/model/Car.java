@@ -36,6 +36,20 @@ public class Car {
     @Column (name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
+    public Car() {
+    }
+
+    public Car(Long id, String model, String brand, Type type, int inventory, BigDecimal dailyFee,
+               boolean isDeleted) {
+        this.id = id;
+        this.model = model;
+        this.brand = brand;
+        this.type = type;
+        this.inventory = inventory;
+        this.dailyFee = dailyFee;
+        this.isDeleted = isDeleted;
+    }
+
     public enum Type {
         SEDAN,
         SUV,

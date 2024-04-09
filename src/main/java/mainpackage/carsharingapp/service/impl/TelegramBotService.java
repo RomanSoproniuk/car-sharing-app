@@ -47,7 +47,7 @@ public class TelegramBotService extends TelegramLongPollingBot {
     }
 
     @Scheduled(cron = "${cron.time}")
-    private void sendOverdueRentals() throws TelegramApiException {
+    public void sendOverdueRentals() throws TelegramApiException {
         LocalDate today = LocalDate.now();
         List<Rental> allByReturnDateAndNotCarNorReturned
                 = rentalRepository.findAllByReturnDateAndNotCarNorReturned(today.plusDays(ONE_DAY));

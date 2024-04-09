@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private static final Long USER_ROLE_ID = 2L;
+    private static final Long CUSTOMER_ROLE_ID = 2L;
     private static final String CHANGE_EMAIL_MESSAGE
             = "If you changed your email, please log in with new email";
     private final UserRepository userRepository;
@@ -46,14 +46,14 @@ public class UserServiceImpl implements UserService {
         user.setFirstName(userRegistrationRequestDto.getFirstName());
         user.setLastName(userRegistrationRequestDto.getLastName());
         user.setPassword(passwordEncoder.encode(userRegistrationRequestDto.getPassword()));
-        Role userRole = roleRepository.findById(USER_ROLE_ID).orElseThrow();
+        Role userRole = roleRepository.findById(CUSTOMER_ROLE_ID).get();
         user.getRoles().add(userRole);
         User savedUser = userRepository.save(user);
         return userMapper.toUserResponse(savedUser);
     }
 
     @Override
-    public void updateUserRole(RoleRequestDto roleRequestDto, Long id) {
+    public UserResponseDto updateUserRole(RoleRequestDto roleRequestDto, Long id) {
         Role roleForUpdate = roleMapper.toEntity(roleRequestDto);
         User userFromDbById = userRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("User by id: " + id
@@ -66,7 +66,8 @@ public class UserServiceImpl implements UserService {
                     + " already has role " + roleRequestDto.getRoleName());
         }
         userFromDbById.getRoles().add(roleFromDbByName);
-        userRepository.save(userFromDbById);
+        User updatedUser = userRepository.save(userFromDbById);
+        return userMapper.toUserResponse(updatedUser);
     }
 
     @Override

@@ -36,6 +36,21 @@ public class Payment {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
+    public Payment() {
+    }
+
+    public Payment(Long id, Long rentalId, URL sessionUrl, String sessionId, BigDecimal amountToPay,
+                   Status status, Type type, boolean isDeleted) {
+        this.id = id;
+        this.rentalId = rentalId;
+        this.sessionUrl = sessionUrl;
+        this.sessionId = sessionId;
+        this.amountToPay = amountToPay;
+        this.status = status;
+        this.type = type;
+        this.isDeleted = isDeleted;
+    }
+
     public enum Status {
         PENDING,
         PAID

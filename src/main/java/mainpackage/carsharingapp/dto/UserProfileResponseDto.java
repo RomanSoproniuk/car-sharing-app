@@ -10,4 +10,14 @@ public class UserProfileResponseDto {
     private String firstName;
     private String lastName;
     private String message;
+
+    public UserProfileResponseDto() {
+    }
+
+    public UserProfileResponseDto(String email, String firstName, String lastName, String message) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.message = message;
+    }
 }

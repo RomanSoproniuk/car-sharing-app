@@ -36,4 +36,20 @@ public class Rental {
     private boolean isDeleted = false;
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
+
+    public Rental() {
+    }
+
+    public Rental(Long id, LocalDate rentalDate, LocalDate returnDate,
+                  LocalDate actualReturnDate, Long carId, Long userId,
+                  boolean isDeleted, boolean isActive) {
+        this.id = id;
+        this.rentalDate = rentalDate;
+        this.returnDate = returnDate;
+        this.actualReturnDate = actualReturnDate;
+        this.carId = carId;
+        this.userId = userId;
+        this.isDeleted = isDeleted;
+        this.isActive = isActive;
+    }
 }
