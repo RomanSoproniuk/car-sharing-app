@@ -60,7 +60,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("""
-            Correct update user role
+            Correct update user role for user
             """)
     @WithMockUser(username = "admin@gmail.com", roles = {"MANAGER"})
     @Sql(scripts = {"classpath:database/users/add-alice-user-to-db.sql"
