@@ -1,0 +1,3 @@
+TRUNCATE TABLE rentals;
+TRUNCATE TABLE cars;
+TRUNCATE TABLE payments;

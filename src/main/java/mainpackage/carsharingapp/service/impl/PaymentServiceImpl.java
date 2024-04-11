@@ -53,7 +53,7 @@ public class PaymentServiceImpl implements PaymentService {
         Long rentalId = paymentRequestDto.getRentalId();
         Rental rental = rentalRepository.findById(rentalId).orElseThrow(() ->
                 new EntityNotFoundException("Rental by id" + rentalId
-                        + " does bot exist"));
+                        + " does not exist"));
         Long carId = rental.getCarId();
         Car carById = carRepository.findById(carId).get();
         BigDecimal moneyToPay = carById.getDailyFee();

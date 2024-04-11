@@ -6,7 +6,9 @@ import mainpackage.carsharingapp.model.Rental;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface RentalRepository extends JpaRepository<Rental, Long>,
         JpaSpecificationExecutor<Rental> {
     @Query("FROM rentals r WHERE r.returnDate <= :nextDate AND r.actualReturnDate IS NULL")

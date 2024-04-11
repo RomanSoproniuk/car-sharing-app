@@ -32,6 +32,14 @@ services:
        "spring.jpa.show-sql" : "true",
        "spring.jpa.open-in-view" : "false",
        "jwt.expiration" : "${JWT_EXPIRATION}",
-       "jwt.secret" : "${JWT_SECRET}"
+       "jwt.secret" : "${JWT_SECRET}",
+       "stripe.secret.key" : "${STRIPE_SECRET_KEY}",
+       "success.path" : "${SUCCESS_PATH}",
+       "cancel.path" : "${CANCEL_PATH}",
+       "scheme.protocol" : "${SCHEME_PROTOCOL}",
+       "host" : "${HOST}",
+       "bot.name" : "${BOT_NAME}",
+       "bot.token" : "${BOT_TOKEN}",
+       "cron.time" : "${CRON_TIME}"
       }'
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
