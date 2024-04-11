@@ -52,8 +52,8 @@ public class CarServiceImpl implements CarService {
     public void updateCarsInventoryById(Long carsId,
                                         CarsInventoryRequestDto carsInventoryRequestDto) {
         Car carByIdFromDb = carRepository.findById(carsId).orElseThrow(() ->
-                new EntityNotFoundException("You can't update car inventory by id" + carsId
-                        + "since car by this id doesn't exist in DB"));
+                new EntityNotFoundException("You can't update car inventory by id " + carsId
+                        + " since car by this id doesn't exist in DB"));
         carByIdFromDb.setInventory(carsInventoryRequestDto.getInventory());
         carRepository.save(carByIdFromDb);
     }
