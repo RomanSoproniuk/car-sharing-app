@@ -14,6 +14,16 @@ databaseChangeLog:
                     nullable: false
                     primaryKey: true
               - column:
+                  name: car_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
                   name: rental_date
                   type: datetime
                   constraints:

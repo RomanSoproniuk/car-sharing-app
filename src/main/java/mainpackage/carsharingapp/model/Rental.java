@@ -26,7 +26,7 @@ public class Rental {
     private LocalDate rentalDate;
     @Column(name = "return_date", nullable = false)
     private LocalDate returnDate;
-    @Column(name = "actual_return_date", nullable = true)
+    @Column(name = "actual_return_date")
     private LocalDate actualReturnDate;
     @Column(name = "car_id", nullable = false)
     private Long carId;

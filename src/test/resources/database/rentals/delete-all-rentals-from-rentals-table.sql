@@ -1,0 +1,2 @@
+TRUNCATE TABLE rentals;
+TRUNCATE TABLE cars;
