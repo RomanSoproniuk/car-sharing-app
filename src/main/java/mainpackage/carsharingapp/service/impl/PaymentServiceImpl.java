@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.PaymentRequestDto;
@@ -123,8 +122,9 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    public List<PaymentResponseDto> findPaymentsWithPagination(Specification<Rental> rentalSpecification,
-                                                               Pageable pageable) {
+    public List<PaymentResponseDto> findPaymentsWithPagination(
+            Specification<Rental> rentalSpecification,
+            Pageable pageable) {
         Page<Rental> rentalPage = rentalRepository.findAll(rentalSpecification, pageable);
 
         Set<Long> rentalIds = rentalPage.getContent().stream()
@@ -137,8 +137,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .map(paymentMapper::toDto)
                 .collect(Collectors.toList());
     }
-
-
 
     @Getter
     public enum SessionStatus {
