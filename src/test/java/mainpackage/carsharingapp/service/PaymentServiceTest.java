@@ -182,7 +182,6 @@ public class PaymentServiceTest {
                 .thenReturn(rentalSpecification);
         Mockito.when(rentalRepository.findAll(rentalSpecification, pageable))
                 .thenReturn(rentalPage);
-        Mockito.when(paymentRepository.findById(Mockito.any())).thenReturn(Optional.of(payment));
         Mockito.when(paymentMapper.toDto(payment)).thenReturn(paymentResponseDto);
         List<PaymentResponseDto> expectedList = List.of(paymentResponseDto);
         Mockito.when(paymentRepository.findByRentalIds(Mockito.any())).thenReturn(List.of(payment));
@@ -206,7 +205,6 @@ public class PaymentServiceTest {
                 .thenReturn(rentalSpecification);
         Mockito.when(rentalRepository.findAll(rentalSpecification, pageable))
                 .thenReturn(rentalPage);
-        Mockito.when(paymentRepository.findById(Mockito.any())).thenReturn(Optional.of(payment));
         Mockito.when(paymentMapper.toDto(payment)).thenReturn(paymentResponseDto);
         List<PaymentResponseDto> expectedList = List.of(paymentResponseDto);
         Mockito.when(paymentRepository.findByRentalIds(Mockito.any())).thenReturn(List.of(payment));
