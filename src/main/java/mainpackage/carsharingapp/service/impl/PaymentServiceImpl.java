@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.PaymentRequestDto;
 import mainpackage.carsharingapp.dto.PaymentResponseDto;
@@ -36,9 +37,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
-    private static final String SESSION_STATUS_OPEN = "open";
-    private static final String SESSION_STATUS_COMPLETE = "complete";
-
     private static final long FINE_MULTIPLIER = 2;
     private static final long NUMBER_IDS_ALLOWED_SEE_CUSTOMER = 1L;
     private final PaymentRepository paymentRepository;
@@ -75,10 +73,10 @@ public class PaymentServiceImpl implements PaymentService {
             throws MalformedURLException {
         Payment payment = new Payment();
         payment.setSessionId(session.getId());
-        if (Objects.equals(session.getStatus(), SESSION_STATUS_OPEN)) {
+        if (Objects.equals(session.getStatus(), SessionStatus.OPEN.title)) {
             payment.setStatus(Payment.Status.PENDING);
         }
-        if (Objects.equals(session.getStatus(), SESSION_STATUS_COMPLETE)) {
+        if (Objects.equals(session.getStatus(), SessionStatus.COMPLETE.title)) {
             payment.setStatus(Payment.Status.PAID);
         }
         payment.setSessionUrl(new URL(session.getUrl()));
@@ -122,6 +120,17 @@ public class PaymentServiceImpl implements PaymentService {
             return rentalRepository.findAll(rentalSpecification, pageable).stream()
                     .map(r -> paymentMapper.toDto(paymentRepository.findById(r.getId()).get()))
                     .toList();
+        }
+    }
+
+    @Getter
+    public enum SessionStatus {
+        OPEN("open"),
+        COMPLETE("complete");
+
+        private final String title;
+        SessionStatus(String title) {
+            this.title = title;
         }
     }
 }
