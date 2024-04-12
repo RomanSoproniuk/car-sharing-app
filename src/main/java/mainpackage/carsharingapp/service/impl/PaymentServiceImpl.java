@@ -110,16 +110,14 @@ public class PaymentServiceImpl implements PaymentService {
                 .findFirst();
         Specification<Rental> rentalSpecification
                 = rentalSpecificationBuilder.build(rentalSearchParameters);
-        if (roleManager.isPresent()) {
-            return findPaymentsWithPagination(rentalSpecification, pageable);
-        } else {
+        if (roleManager.isEmpty()) {
             if (rentalSearchParameters.usersId().length != NUMBER_IDS_ALLOWED_SEE_CUSTOMER
                     || !Arrays.stream(rentalSearchParameters.usersId()).findFirst()
                     .get().equals(user.getId())) {
                 throw new RoleException("You have not access to see not you own payments");
             }
-            return findPaymentsWithPagination(rentalSpecification, pageable);
         }
+        return findPaymentsWithPagination(rentalSpecification, pageable);
     }
 
     public List<PaymentResponseDto> findPaymentsWithPagination(
