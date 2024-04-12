@@ -15,5 +15,5 @@ public interface PaymentRepository extends JpaRepository<Payment, Long>,
     Payment findPaymentBySessionId(String sessionId);
 
     @Query("SELECT p FROM payments p WHERE p.rentalId IN :rentalIds AND p.isDeleted = false")
-    List<Payment> findByRentalIds(@Param("rentalIds") Set<Long> rentalIds);
+    List<Payment> findByRentalIds(@Param("rentalId") Set<Long> rentalIds);
 }
