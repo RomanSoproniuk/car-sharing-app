@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.PaymentRequestDto;
@@ -30,6 +33,7 @@ import mainpackage.carsharingapp.repository.RentalRepository;
 import mainpackage.carsharingapp.repository.RentalSpecificationBuilder;
 import mainpackage.carsharingapp.repository.UserRepository;
 import mainpackage.carsharingapp.service.PaymentService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -108,20 +112,33 @@ public class PaymentServiceImpl implements PaymentService {
         Specification<Rental> rentalSpecification
                 = rentalSpecificationBuilder.build(rentalSearchParameters);
         if (roleManager.isPresent()) {
-            return rentalRepository.findAll(rentalSpecification, pageable).stream()
-                    .map(r -> paymentMapper.toDto(paymentRepository.findById(r.getId()).get()))
-                    .toList();
+            return findPaymentsWithPagination(rentalSpecification, pageable);
         } else {
             if (rentalSearchParameters.usersId().length != NUMBER_IDS_ALLOWED_SEE_CUSTOMER
                     || !Arrays.stream(rentalSearchParameters.usersId()).findFirst()
                     .get().equals(user.getId())) {
                 throw new RoleException("You have not access to see not you own payments");
             }
-            return rentalRepository.findAll(rentalSpecification, pageable).stream()
-                    .map(r -> paymentMapper.toDto(paymentRepository.findById(r.getId()).get()))
-                    .toList();
+            return findPaymentsWithPagination(rentalSpecification, pageable);
         }
     }
+
+    public List<PaymentResponseDto> findPaymentsWithPagination(Specification<Rental> rentalSpecification,
+                                                               Pageable pageable) {
+        Page<Rental> rentalPage = rentalRepository.findAll(rentalSpecification, pageable);
+
+        Set<Long> rentalIds = rentalPage.getContent().stream()
+                .map(Rental::getId)
+                .collect(Collectors.toSet());
+
+        List<Payment> payments = paymentRepository.findByRentalIds(rentalIds);
+
+        return payments.stream()
+                .map(paymentMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+
 
     @Getter
     public enum SessionStatus {
