@@ -4,6 +4,8 @@
 
 In today's world, where convenience and efficiency are paramount, traditional car rental services often lag behind in terms of technology and user experience. Imagine a scenario where you need to rent a car quickly, but the process involves cumbersome paperwork, manual record-keeping, and limited payment options. This is the problem that inspired the creation of the Car Rental Service project.
 
+<img src="CarSharingMain.jpeg" style="width:800px; max-width:100%"></img>
+
 There is a car sharing service in your city, where you can rent cars and pay for your usage using cash, depending on the duration of your rental. However, the existing system for tracking cars, rentals, users, and payments is outdated and inefficient. Everything is managed manually, leading to errors, confusion, and frustration for both users and administrators. With no way to check the availability of specific cars, limited payment methods, and no tracking of rental returns, the need for a modern, online management system is evident.
 
 ## Technologies and Tools Used

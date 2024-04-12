@@ -15,4 +15,10 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Build with Maven
-        run: mvn clean verify
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+        run: |
+          mvn clean verify -Dspring.datasource.password=$SPRING_DATASOURCE_PASSWORD -Dbot.token=$BOT_TOKEN -Djwt.secret=$JWT_SECRET -Dstripe.secret.key=$STRIPE_SECRET_KEY

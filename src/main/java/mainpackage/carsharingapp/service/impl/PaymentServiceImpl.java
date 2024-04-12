@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import mainpackage.carsharingapp.dto.PaymentRequestDto;
 import mainpackage.carsharingapp.dto.PaymentResponseDto;
@@ -29,6 +32,7 @@ import mainpackage.carsharingapp.repository.RentalRepository;
 import mainpackage.carsharingapp.repository.RentalSpecificationBuilder;
 import mainpackage.carsharingapp.repository.UserRepository;
 import mainpackage.carsharingapp.service.PaymentService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -36,9 +40,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
-    private static final String SESSION_STATUS_OPEN = "open";
-    private static final String SESSION_STATUS_COMPLETE = "complete";
-
     private static final long FINE_MULTIPLIER = 2;
     private static final long NUMBER_IDS_ALLOWED_SEE_CUSTOMER = 1L;
     private final PaymentRepository paymentRepository;
@@ -75,10 +76,10 @@ public class PaymentServiceImpl implements PaymentService {
             throws MalformedURLException {
         Payment payment = new Payment();
         payment.setSessionId(session.getId());
-        if (Objects.equals(session.getStatus(), SESSION_STATUS_OPEN)) {
+        if (Objects.equals(session.getStatus(), SessionStatus.OPEN.title)) {
             payment.setStatus(Payment.Status.PENDING);
         }
-        if (Objects.equals(session.getStatus(), SESSION_STATUS_COMPLETE)) {
+        if (Objects.equals(session.getStatus(), SessionStatus.COMPLETE.title)) {
             payment.setStatus(Payment.Status.PAID);
         }
         payment.setSessionUrl(new URL(session.getUrl()));
@@ -109,19 +110,40 @@ public class PaymentServiceImpl implements PaymentService {
                 .findFirst();
         Specification<Rental> rentalSpecification
                 = rentalSpecificationBuilder.build(rentalSearchParameters);
-        if (roleManager.isPresent()) {
-            return rentalRepository.findAll(rentalSpecification, pageable).stream()
-                    .map(r -> paymentMapper.toDto(paymentRepository.findById(r.getId()).get()))
-                    .toList();
-        } else {
+        if (roleManager.isEmpty()) {
             if (rentalSearchParameters.usersId().length != NUMBER_IDS_ALLOWED_SEE_CUSTOMER
                     || !Arrays.stream(rentalSearchParameters.usersId()).findFirst()
                     .get().equals(user.getId())) {
                 throw new RoleException("You have not access to see not you own payments");
             }
-            return rentalRepository.findAll(rentalSpecification, pageable).stream()
-                    .map(r -> paymentMapper.toDto(paymentRepository.findById(r.getId()).get()))
-                    .toList();
+        }
+        return findPaymentsWithPagination(rentalSpecification, pageable);
+    }
+
+    public List<PaymentResponseDto> findPaymentsWithPagination(
+            Specification<Rental> rentalSpecification,
+            Pageable pageable) {
+        Page<Rental> rentalPage = rentalRepository.findAll(rentalSpecification, pageable);
+
+        Set<Long> rentalIds = rentalPage.getContent().stream()
+                .map(Rental::getId)
+                .collect(Collectors.toSet());
+
+        List<Payment> payments = paymentRepository.findByRentalIds(rentalIds);
+
+        return payments.stream()
+                .map(paymentMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Getter
+    public enum SessionStatus {
+        OPEN("open"),
+        COMPLETE("complete");
+
+        private final String title;
+        SessionStatus(String title) {
+            this.title = title;
         }
     }
 }
