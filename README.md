@@ -84,7 +84,7 @@ There is a car sharing service in your city, where you can rent cars and pay for
 
 7. Explore the available endpoints and functionalities.
 
-8. Utilize the provided Postman collection for testing and development: https://galactic-meadow-347245.postman.co/workspace/New-Team-Workspace~095e9df6-4048-4837-86a9-4a9827b0e200/collection/33241432-8be47c0d-d4e4-4151-b96d-e5b2b689cbdf?action=share&creator=33241432.
+8. Utilize the provided Postman collection for testing and development: <a href="https://galactic-meadow-347245.postman.co/workspace/New-Team-Workspace~095e9df6-4048-4837-86a9-4a9827b0e200/collection/33241432-8be47c0d-d4e4-4151-b96d-e5b2b689cbdf?action=share&creator=33241432"> Postman Collection</a>
 
 9. I also add the database scheme for a better understanding of working with it.
    <img src="CarSharing.png" style="width:800px; max-width:100%"></img>
