@@ -120,7 +120,7 @@ public class PaymentServiceImpl implements PaymentService {
         return findPaymentsWithPagination(rentalSpecification, pageable);
     }
 
-    public List<PaymentResponseDto> findPaymentsWithPagination(
+    private List<PaymentResponseDto> findPaymentsWithPagination(
             Specification<Rental> rentalSpecification,
             Pageable pageable) {
         Page<Rental> rentalPage = rentalRepository.findAll(rentalSpecification, pageable);
